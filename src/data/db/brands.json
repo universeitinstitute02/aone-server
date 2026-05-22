@@ -1,0 +1,34 @@
+[
+  {
+    "id": "br-1",
+    "name": "A One Pro",
+    "slug": "aone-pro",
+    "logo": "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&q=80&w=150",
+    "description": "Our premium in-house high-performance brand",
+    "active": true
+  },
+  {
+    "id": "br-2",
+    "name": "Mobil 1",
+    "slug": "mobil-1",
+    "logo": "https://images.unsplash.com/photo-1518384401463-d387de1b827a?auto=format&fit=crop&q=80&w=150",
+    "description": "World leader in synthetic engine oils",
+    "active": true
+  },
+  {
+    "id": "br-3",
+    "name": "Motul",
+    "slug": "motul",
+    "logo": "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=150",
+    "description": "Premium racing-grade lubricants and specialty oils",
+    "active": true
+  },
+  {
+    "id": "br-4",
+    "name": "Castrol Edge",
+    "slug": "castrol",
+    "logo": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&q=80&w=150",
+    "description": "Fluid titanium technology engine oil",
+    "active": true
+  }
+]

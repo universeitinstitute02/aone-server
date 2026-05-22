@@ -1,0 +1,42 @@
+[
+  {
+    "id": "cat-1",
+    "name": "Fully Synthetic Oil",
+    "slug": "fully-synthetic",
+    "description": "Maximum performance for modern engines",
+    "image": "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&q=80&w=300",
+    "active": true
+  },
+  {
+    "id": "cat-2",
+    "name": "Semi Synthetic Oil",
+    "slug": "semi-synthetic",
+    "description": "Excellent balance of protection and value",
+    "image": "https://images.unsplash.com/photo-1616422285623-13ff0162193c?auto=format&fit=crop&q=80&w=300",
+    "active": true
+  },
+  {
+    "id": "cat-3",
+    "name": "Mineral Engine Oil",
+    "slug": "mineral-oil",
+    "description": "Traditional protection for older engines",
+    "image": "https://images.unsplash.com/photo-1552802640-192a5438a2e2?auto=format&fit=crop&q=80&w=300",
+    "active": true
+  },
+  {
+    "id": "cat-4",
+    "name": "Premium Coolants",
+    "slug": "coolants",
+    "description": "Optimized thermal management for radiators",
+    "image": "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&q=80&w=300",
+    "active": true
+  },
+  {
+    "id": "cat-5",
+    "name": "Additives & Gear Oils",
+    "slug": "additives",
+    "description": "Transmission, steering, and fuel additives",
+    "image": "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=300",
+    "active": true
+  }
+]
