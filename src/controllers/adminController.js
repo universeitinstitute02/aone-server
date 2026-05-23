@@ -1,9 +1,6 @@
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
-const Category = require('../models/Category');
-const { getDBStatus } = require('../config/db');
-const { localDb, readCollection } = require('../utils/localDb');
 
 // @desc    Get dashboard metrics (Total Sales, Orders, Customers, Stock warnings, and Investments)
 // @route   GET /api/admin/stats
@@ -17,35 +14,16 @@ exports.getStats = async (req, res, next) => {
     let lowStockCount = 0;
     let totalInvestments = 0;
 
-    if (getDBStatus()) {
-      // 1. Total Revenue from Mongoose
-      const completedOrders = await Order.find({ paymentStatus: 'paid' });
-      totalRevenue = completedOrders.reduce((sum, order) => sum + order.total, 0);
+    const completedOrders = await Order.find({ paymentStatus: 'paid' });
+    totalRevenue = completedOrders.reduce((sum, order) => sum + order.total, 0);
 
-      // 2. Count metrics
-      totalOrders = await Order.countDocuments();
-      totalProducts = await Product.countDocuments({ active: true });
-      totalCustomers = await User.countDocuments({ role: 'customer' });
-      lowStockCount = await Product.countDocuments({ stock: { $lt: 10 }, active: true });
+    totalOrders = await Order.countDocuments();
+    totalProducts = await Product.countDocuments({ active: true });
+    totalCustomers = await User.countDocuments({ role: 'customer' });
+    lowStockCount = await Product.countDocuments({ stock: { $lt: 10 }, active: true });
 
-      // 3. Investment totals
-      const users = await User.find();
-      totalInvestments = users.reduce((sum, usr) => sum + (usr.investmentAmount || 0), 0);
-    } else {
-      // Local collections
-      const orders = readCollection('orders');
-      const products = readCollection('products').filter(p => p.active !== false);
-      const users = readCollection('users');
-
-      const completedOrders = orders.filter(o => o.paymentStatus === 'paid');
-      totalRevenue = completedOrders.reduce((sum, o) => sum + o.total, 0);
-
-      totalOrders = orders.length;
-      totalProducts = products.length;
-      totalCustomers = users.filter(u => u.role === 'customer').length;
-      lowStockCount = products.filter(p => p.stock < 10).length;
-      totalInvestments = users.reduce((sum, u) => sum + (u.investmentAmount || 0), 0);
-    }
+    const users = await User.find();
+    totalInvestments = users.reduce((sum, usr) => sum + (usr.investmentAmount || 0), 0);
 
     res.status(200).json({
       success: true,
@@ -71,15 +49,8 @@ exports.getCharts = async (req, res, next) => {
     let ordersList = [];
     let productsList = [];
 
-    if (getDBStatus()) {
-      ordersList = await Order.find().populate('items.product');
-      productsList = await Product.find({ active: true }).populate('category');
-    } else {
-      ordersList = readCollection('orders');
-      productsList = readCollection('products').filter(p => p.active !== false).map(p => {
-        return localDb.populate(p, 'products', 'category', 'categories');
-      });
-    }
+    ordersList = await Order.find().populate('items.product');
+    productsList = await Product.find({ active: true }).populate('category');
 
     // 1. Monthly Revenue Analytics (Last 6 Months)
     const monthlyRevMap = {};
@@ -161,19 +132,8 @@ exports.getCharts = async (req, res, next) => {
 // @access  Private (Admin only)
 exports.getUsers = async (req, res, next) => {
   try {
-    if (getDBStatus()) {
-      const users = await User.find().sort('-createdAt');
-      return res.status(200).json({ success: true, count: users.length, users });
-    } else {
-      const users = readCollection('users');
-      // Strip passwords for security
-      const sanitizedUsers = users.map(u => {
-        const { password, ...rest } = u;
-        return rest;
-      });
-      sanitizedUsers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      return res.status(200).json({ success: true, count: sanitizedUsers.length, users: sanitizedUsers });
-    }
+    const users = await User.find().sort('-createdAt');
+    return res.status(200).json({ success: true, count: users.length, users });
   } catch (err) {
     next(err);
   }
@@ -191,32 +151,18 @@ exports.updateUserRole = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Please specify a target role' });
     }
 
-    if (getDBStatus()) {
-      const user = await User.findById(id);
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-      }
-
-      user.role = role;
-      if (investmentAmount !== undefined) {
-        user.investmentAmount = parseFloat(investmentAmount);
-      }
-      await user.save();
-
-      return res.status(200).json({ success: true, message: 'User updated successfully', user });
-    } else {
-      const user = localDb.findById('users', id);
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-      }
-
-      const updated = localDb.findByIdAndUpdate('users', id, {
-        role,
-        investmentAmount: investmentAmount !== undefined ? parseFloat(investmentAmount) : user.investmentAmount
-      });
-
-      return res.status(200).json({ success: true, message: 'User updated successfully', user: updated });
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
+
+    user.role = role;
+    if (investmentAmount !== undefined) {
+      user.investmentAmount = parseFloat(investmentAmount);
+    }
+    await user.save();
+
+    return res.status(200).json({ success: true, message: 'User updated successfully', user });
   } catch (err) {
     next(err);
   }

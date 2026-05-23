@@ -1,7 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const { connectDB, getDBStatus } = require('../config/db');
+const { connectDB } = require('../config/db');
 
 // Import Mongoose Models
 const User = require('../models/User');
@@ -53,14 +52,11 @@ const seedDB = async () => {
     console.log('✓ Collections cleared successfully.');
 
     console.log('\n👤 Seeding user accounts (password: "123456")...');
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('123456', salt);
-
     const users = await User.create([
       {
         name: 'A One Admin',
         email: 'admin@aonelub.com',
-        password: hashedPassword,
+        password: '123456',
         role: 'admin',
         phone: '+1 (555) 019-9000',
         address: { street: '100 Automotive Blvd', city: 'Detroit', postalCode: '48201', country: 'USA' },
@@ -70,7 +66,7 @@ const seedDB = async () => {
       {
         name: 'John Crew',
         email: 'employee@aonelub.com',
-        password: hashedPassword,
+        password: '123456',
         role: 'employee',
         phone: '+1 (555) 019-9001',
         address: { street: '200 Logistics Road', city: 'Chicago', postalCode: '60601', country: 'USA' },
@@ -80,7 +76,7 @@ const seedDB = async () => {
       {
         name: 'Robert Lubricity',
         email: 'customer@aonelub.com',
-        password: hashedPassword,
+        password: '123456',
         role: 'customer',
         phone: '+1 (555) 019-9002',
         address: { street: '456 Gearhead Lane', city: 'Los Angeles', postalCode: '90001', country: 'USA' },

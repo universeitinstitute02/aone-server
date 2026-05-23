@@ -26,9 +26,7 @@ app.get("/api/health", (req, res) => {
     success: true,
     message: "A One Lub REST API Service is healthy",
     timestamp: new Date().toISOString(),
-    databaseMode: getDBStatus()
-      ? "Mongoose DB Live"
-      : "Local Data Fallback Offline Mode",
+    databaseMode: getDBStatus() ? "MongoDB Live" : "MongoDB Disconnected",
   });
 });
 
@@ -51,21 +49,15 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  // Try connecting to MongoDB. Graceful fallback holds if offline.
   await connectDB();
 
   app.listen(PORT, () => {
-    console.log(
-      `\n🚀 A One Lub E-Commerce Server running in ${process.env.NODE_ENV || "development"} mode on PORT ${PORT}`,
-    );
-    console.log(`🔗 API Base Address: http://localhost:${PORT}`);
-    console.log(
-      `⚙️ DB Mode: ${getDBStatus() ? "MongoDB-Live" : "JSON-Local-DB"}`,
-    );
-    console.log(
-      "================================================================\n",
-    );
+    console.log(`API Base Address: http://localhost:${PORT}`);
+    console.log(`DB Mode: ${getDBStatus() ? "MongoDB-Live" : "MongoDB-Disconnected"}`);
+    console.log("================================================================\n");
   });
 };
 
-startServer();
+startServer().catch(() => {
+  process.exit(1);
+});
